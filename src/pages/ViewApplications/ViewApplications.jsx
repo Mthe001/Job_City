@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ViewApplications = () => {
     const applications = useLoaderData();
@@ -14,32 +15,54 @@ const ViewApplications = () => {
 
     // Handle status change
     const handleStatusChange = async (id, newStatus) => {
-        try {
-            const response = await fetch(`http://localhost:5000/job-applications/${id}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: newStatus }),
-            });
+        // Confirmation Alert
+        const result = await Swal.fire({
+            title: 'Are you sure?',
+            text: `You are about to change the status to "${newStatus}"`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, change it!',
+        });
 
-            if (response.ok) {
-                const result = await response.json();
-                console.log(`Application ${id} status updated to: ${newStatus}`, result);
+        if (result.isConfirmed) {
+            try {
+                const response = await fetch(`http://localhost:5000/job-applications/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ status: newStatus }),
+                });
 
-                // Optionally update the local state if needed
-                setStatuses((prevStatuses) => ({
-                    ...prevStatuses,
-                    [id]: newStatus,
-                }));
-            } else {
-                console.error(`Failed to update status for application ${id}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`Application ${id} status updated to: ${newStatus}`, data);
+
+                    // Update the local state
+                    setStatuses((prevStatuses) => ({
+                        ...prevStatuses,
+                        [id]: newStatus,
+                    }));
+
+                    // Success Alert
+                    Swal.fire(
+                        'Updated!',
+                        `The status has been changed to "${newStatus}".`,
+                        'success'
+                    );
+                } else {
+                    throw new Error('Failed to update status');
+                }
+            } catch (error) {
+                console.error(`Error updating status for application ${id}:`, error);
+
+                // Error Alert
+                Swal.fire('Error', 'There was a problem updating the status. Please try again.', 'error');
             }
-        } catch (error) {
-            console.error(`Error updating status for application ${id}:`, error);
         }
     };
-
 
     return (
         <div className="p-6 max-w-5xl mx-auto bg-zinc-800 rounded-lg shadow-lg">
@@ -98,9 +121,6 @@ const ViewApplications = () => {
                                     </td>
                                     <td>
                                         <select
-
-
-
                                             className="select select-bordered bg-zinc-700 text-gray-100"
                                             value={statuses[app._id]}
                                             onChange={(e) => handleStatusChange(app._id, e.target.value)}
