@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import useAuth from '../../hooks/useAuth';
 
 const MyPostedJobs = () => {
@@ -14,10 +14,7 @@ const MyPostedJobs = () => {
             .catch(error => console.error('Error fetching jobs:', error));
     }, [user.email]);
 
-    // Function to handle "View Applications" click
-    const handleViewApplications = (jobId) => {
-        navigate(`/applications/${jobId}`); // Navigate to a route with the job ID
-    };
+
 
     return (
         <div className="p-6 max-w-5xl mx-auto bg-zinc-800 rounded-lg shadow-lg">
@@ -54,12 +51,14 @@ const MyPostedJobs = () => {
                                     </td>
                                     <td>{new Date(job.applicationDeadline).toLocaleDateString()}</td>
                                     <td>
-                                        <button
-                                            onClick={() => handleViewApplications(job._id)}
-                                            className="btn btn-sm btn-primary text-gray-100"
-                                        >
-                                            View Applications
-                                        </button>
+                                        <Link to={`/view_applications/${job._id}`}>
+                                            <button
+
+                                                className="btn btn-sm btn-primary text-gray-100"
+                                            >
+                                                View Applications
+                                            </button>
+                                        </Link>
                                     </td>
                                 </tr>
                             ))}
