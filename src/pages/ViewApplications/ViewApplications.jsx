@@ -13,13 +13,33 @@ const ViewApplications = () => {
     );
 
     // Handle status change
-    const handleStatusChange = (id, newStatus) => {
-        setStatuses((prevStatuses) => ({
-            ...prevStatuses,
-            [id]: newStatus,
-        }));
-        console.log(`Application ${id} status updated to: ${newStatus}`);
+    const handleStatusChange = async (id, newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:5000/job-applications/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: newStatus }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log(`Application ${id} status updated to: ${newStatus}`, result);
+
+                // Optionally update the local state if needed
+                setStatuses((prevStatuses) => ({
+                    ...prevStatuses,
+                    [id]: newStatus,
+                }));
+            } else {
+                console.error(`Failed to update status for application ${id}`);
+            }
+        } catch (error) {
+            console.error(`Error updating status for application ${id}:`, error);
+        }
     };
+
 
     return (
         <div className="p-6 max-w-5xl mx-auto bg-zinc-800 rounded-lg shadow-lg">
