@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
 import AuthContext from '../../context/AuthContext/AuthContext';
+import axios from 'axios';
 
 const SignIn = () => {
     const { signinUser, googleSignIn } = useContext(AuthContext);
@@ -20,8 +21,15 @@ const SignIn = () => {
 
         signinUser(email, password)
             .then((result) => {
-                console.log('Sign In Successful:', result.user);
-                navigate(from, { replace: true }); // Redirect to the original location or home page after successful sign-in
+                console.log('Sign In Successful:', result.user.email);
+                // navigate(from, { replace: true }); // Redirect to the original location or home page after successful sign-in
+                const user = { email: email }
+                axios.post('http://localhost:5000/jwt', user, { withCredentials: true })
+                    .then(
+                        res => {
+                            console.log(res.data);
+                        }
+                    )
             })
             .catch((error) => {
                 console.error('Error signing in:', error);
