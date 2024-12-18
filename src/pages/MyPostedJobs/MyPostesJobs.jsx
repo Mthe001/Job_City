@@ -27,6 +27,7 @@ const MyPostedJobs = () => {
                                 <th>Location</th>
                                 <th>Job Type</th>
                                 <th>Category</th>
+                                <th>Applcation Count</th>
                                 <th>Salary Range</th>
                                 <th>Application Deadline</th>
                             </tr>
@@ -39,6 +40,8 @@ const MyPostedJobs = () => {
                                     <td>{job.location}</td>
                                     <td>{job.jobType}</td>
                                     <td>{job.category}</td>
+                                    <td>{job.applicationCount}</td>
+
                                     <td>
                                         {job.salaryRange?.min} - {job.salaryRange?.max} {job.currency}
                                     </td>
