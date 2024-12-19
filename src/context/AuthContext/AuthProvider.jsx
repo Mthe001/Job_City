@@ -53,7 +53,7 @@ const AuthProvider = ({ children }) => {
             console.log('state captured', currentUser?.email)
 
             if (currentUser?.email) {
-                const user = { email: currentUser }
+                const user = { email: currentUser.email }
 
                 axios.post('http://localhost:5000/jwt', user, { withCredentials: true })
                     .then(response => {
