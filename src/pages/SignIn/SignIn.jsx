@@ -23,7 +23,7 @@ const SignIn = () => {
             .then((result) => {
                 console.log('Sign In Successful:', result.user.email);
                 // navigate(from, { replace: true }); // Redirect to the original location or home page after successful sign-in
-                const user = { email: email }
+                const user = { email: result.user.email }
                 axios.post('http://localhost:5000/jwt', user, { withCredentials: true })
                     .then(
                         res => {
